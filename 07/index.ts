@@ -1,38 +1,20 @@
 import { readInput } from '../utils/readInput.ts';
-const input = readInput(import.meta.url, process.argv.includes('--example'));
-
-const calibrations = input.split('\n').map((line) => {
-  const [result, rest] = line.split(': ');
-  const operands = rest.split(' ').map(Number);
-  return { result: Number(result), operands };
+const s = readInput(import.meta.url, process.argv.includes('--example'));
+const n = s.split('\n').map((r) => {
+  const [t, o] = r.split(': ');
+  const e = o.split(' ').map(Number);
+  return { i: Number(t), t: e };
 });
-
-const OPERATORS = {
-  '+': (a: number, b: number) => a + b,
-  '*': (a: number, b: number) => a * b,
-  '||': (a: number, b: number) => Number(`${a}${b}`),
+const m = { o: (r, t) => r + t, m: (r, t) => r * t, p: (r, t) => Number(`${r}${t}`) };
+const c = (r, t, o, e) => {
+  if (o.length === 0) return t === r;
+  const [s, ...n] = o;
+  const m = e.map((r) => r(t, s));
+  return m.some((t) => c(r, t, n, e));
 };
-
-const hasValidCalibration = (
-  targetResult: number,
-  partialResult: number,
-  remainingOperands: number[],
-  operators: ((a: number, b: number) => number)[],
-) => {
-  if (remainingOperands.length === 0) return partialResult === targetResult;
-  const [current, ...rest] = remainingOperands;
-  const resultsAfterOperators = operators.map((operator) => operator(partialResult, current));
-  return resultsAfterOperators.some((tempResult) => hasValidCalibration(targetResult, tempResult, rest, operators));
-};
-
-let validCalibrations = calibrations.filter(({ result, operands }) =>
-  hasValidCalibration(result, 0, operands, [OPERATORS['+'], OPERATORS['*']]),
-);
-let sumOfValidCalibrations = validCalibrations.reduce((acc, i) => acc + i.result, 0);
-console.log('Part 1:', sumOfValidCalibrations);
-
-validCalibrations = calibrations.filter(({ result, operands }) =>
-  hasValidCalibration(result, 0, operands, [OPERATORS['+'], OPERATORS['*'], OPERATORS['||']]),
-);
-sumOfValidCalibrations = validCalibrations.reduce((acc, i) => acc + i.result, 0);
-console.log('Part 2:', sumOfValidCalibrations);
+let p = n.filter(({ i: r, t: t }) => c(r, 0, t, [m['o'], m['m']]));
+let u = p.reduce((r, t) => r + t.i, 0);
+console.log('Part 1:', u);
+p = n.filter(({ i: r, t: t }) => c(r, 0, t, [m['o'], m['m'], m['p']]));
+u = p.reduce((r, t) => r + t.i, 0);
+console.log('Part 2:', u);
